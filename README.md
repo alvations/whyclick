@@ -26,4 +26,6 @@ Options:
 ```
 $ whyclick download-whyq-orders \
 -u alvations@xmail.com -p **** > whyq-myorders.json
+
+$ cat whyq-myorders.json
 ```
