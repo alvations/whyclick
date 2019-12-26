@@ -11,7 +11,7 @@ pip install -U whyclick
 
 # Usage
 
-## Randomly order for the week
+## Randomly orders for the week
 
 ```
 $ whyclick randomly-order-whyq --help
