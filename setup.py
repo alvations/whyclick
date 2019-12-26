@@ -11,7 +11,7 @@ whyclick=whyclick.cli:cli
 
 setup(
     name='whyclick',
-    version='0.0.4',
+    version='0.0.5',
     packages=['whyclick'],
     description="Cos I don't like to click",
     long_description='',

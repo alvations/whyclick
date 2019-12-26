@@ -62,16 +62,42 @@ def download_previous_orders(driver):
     return orders_json
 
 
-def randomly_order(driver):
+def apply_dietary_filters(driver, halal=False, healthy=False, vegetarian=False):
+    # Apply dietary filter
+    driver.find_element_by_xpath('//a[@class="fdctfilter"]').click()
+    for dietary in driver.find_elements_by_xpath('//input[@class="cfilter"]'):
+        if dietary.get_attribute('value') == 'cat-7' and halal == True:
+            dietary.click()
+        if dietary.get_attribute('value') == 'cat-2' and vegetarian == True:
+            dietary.click()
+        if dietary.get_attribute('value') == 'cat-1' and healthy == True:
+            dietary.click()
+    driver.find_element_by_xpath('//a[@id="btnFilter"]').click()
+
+
+def randomly_order(driver, halal=False, healthy=False, vegetarian=False):
     days = driver.find_elements_by_xpath("//div[@class='owl-item active']")
     for element_day in days:
         # Select day.
         element_day.click()
-        # Find meals.
-        meals = [b for b in element_day.find_elements_by_xpath('//button')
-                 if b and b.text == "ADD"]
-        # Randomly choose one.
-        random.choice(meals).click()
+        time.sleep(1)
+        loop_count = 0 # Sanity break.
+        while True:
+            try:
+                # Apply dietary filter
+                apply_dietary_filters(driver, halal, healthy, vegetarian)
+                # Find meals.
+                meals = [b for b in element_day.find_elements_by_xpath('//button')
+                         if b and b.text == "ADD"]
+                # Randomly choose one.
+                random.choice(meals).click()
+                break
+            except IndexError: # No meals from dietary restriction.
+                # Repeat the loop so that the filters are undone.
+                pass
+            if loop_count > 3: # Sanity break.
+                break # If everything fails, go to next day.
+            loop_count += 1
         time.sleep(3)
     # Checkout.
     driver.find_element_by_link_text("PLACE ORDER").click()

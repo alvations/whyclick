@@ -40,11 +40,23 @@ def download_whyq_orders(
 @click.option(
     "--password", "-p", help="Your WhyQ password."
 )
+@click.option(
+    "--halal", is_flag=True, default=False, help="Halal only options."
+)
+@click.option(
+    "--healthy", is_flag=True, default=False, help="Healthy only options."
+)
+@click.option(
+    "--vegetarian", is_flag=True, default=False, help="Vegetarian only options."
+)
 def randomly_order_whyq(
     username,
-    password
+    password,
+    halal,
+    healthy,
+    vegetarian
 ):
     # Login to WhyQ
     driver = whyq.login(username, password)
     # Randomly order.
-    whyq.randomly_order(driver)
+    whyq.randomly_order(driver, halal, healthy, vegetarian)

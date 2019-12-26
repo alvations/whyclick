@@ -20,6 +20,9 @@ Usage: whyclick randomly-order-whyq [OPTIONS]
 Options:
   -u, --username TEXT  Your WhyQ username.
   -p, --password TEXT  Your WhyQ password.
+  --halal              Halal only options.
+  --healthy            Healthy only options.
+  --vegetarian         Vegetarian only options.
   -h, --help           Show this message and exit.
 
 $ whyclick randomly-order-whyq \
