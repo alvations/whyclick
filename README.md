@@ -11,6 +11,23 @@ pip install -U whyclick
 
 # Usage
 
+## Randomly order for the week
+
+```
+$ whyclick randomly-order-whyq --help
+Usage: whyclick randomly-order-whyq [OPTIONS]
+
+Options:
+  -u, --username TEXT  Your WhyQ username.
+  -p, --password TEXT  Your WhyQ password.
+  -h, --help           Show this message and exit.
+
+$ whyclick randomly-order-whyq \
+-u alvas@xmail.com -p ****
+```
+
+## Download your previous orders
+
 ```
 $ whyclick download-whyq-orders --help
 Usage: whyclick download-whyq-orders [OPTIONS]
@@ -19,13 +36,9 @@ Options:
   -u, --username TEXT  Your WhyQ username.
   -p, --password TEXT  Your WhyQ password.
   -h, --help           Show this message and exit.
-```
 
-# Example
-
-```
 $ whyclick download-whyq-orders \
--u alvations@xmail.com -p **** > whyq-myorders.json
+-u alvas@xmail.com -p **** > whyq-myorders.json
 
 $ cat whyq-myorders.json
 ```

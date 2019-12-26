@@ -17,6 +17,7 @@ def open_chrome(headless=True):
     path = pyderman.install(browser=pyderman.chrome)
 
     options = Options()
+    options.add_argument("--enable-javascript")
     options.headless = headless
 
     driver = webdriver.Chrome(path, options=options)
