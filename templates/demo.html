@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+    <script type="text/javascript">
+    function validateForm(formObj) {
+
+        if (formObj.username.value=='') {
+            alert('Please enter a username');
+            return false;
+        }
+
+        if (formObj.password.value=='') {
+            alert('Please enter a password');
+            return false;
+        }
+
+        formObj.submitButton.disabled = true;
+        formObj.submitButton.value = 'Please Wait...';
+        return true;
+
+    }
+    </script>
+
+
+    <head>
+        <title>Why Click?</title>
+
+        <link rel="stylesheet" media="screen" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    </head>
+    <body>
+        <br><br>
+        <div class="container">
+        <form action="" method="post" onsubmit="return validateForm(this);">
+            {{ form.csrf }}
+            <div class="form-group">
+            <div class="input text">
+            <table>
+            <tbody>
+            <tr>
+                <td>{{ form.username.label }}</td>
+                <td>{{ form.username(size="55", maxlength=25) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.password.label }}</td>
+                <td>{{ form.password(cols="55", rows="10") }}</td>
+            </tr>
+
+            <tr>
+                <td>{{ form.dietary.label }}</td>
+                <td>{{ form.dietary }}</td>
+            </tr>
+
+            </tbody>
+            </table>
+
+        </div>
+
+            </div>
+
+            <div class="input submit">
+                <input type="submit" name="submitButton" value="Submit" />
+            </div>
+
+
+        </form>
+        </div>
+
+        <br><br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message[1] |safe}}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+    </body>
+</html>
+
+{% macro input(name, value='', type='text', size=20) -%}
+    <input type="{{ type }}" name="{{ name }}" value="{{
+        value|e }}" size="{{ size }}">
+{%- endmacro %}

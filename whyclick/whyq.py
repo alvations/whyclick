@@ -7,9 +7,9 @@ from bs4 import BeautifulSoup
 
 from whyclick.chrome import open_chrome, remove_popups
 
-def login(username, password):
+def login(username, password, headless=False):
     whyq_url = 'https://www.whyq.sg'
-    driver = open_chrome(whyq_url)
+    driver = open_chrome(headless=headless)
     driver = remove_popups(driver, whyq_url, 'pop_promo')
 
     # Activate the login popup.
@@ -74,30 +74,46 @@ def apply_dietary_filters(driver, halal=False, healthy=False, vegetarian=False):
             dietary.click()
     driver.find_element_by_xpath('//a[@id="btnFilter"]').click()
 
+def randomly_order_one_day(driver, element_day, halal=False, healthy=False, vegetarian=False):
+    # Select day.
+    time.sleep(1)
+    loop_count = 0 # Sanity break.
+    while True:
+        try:
+            # Apply dietary filter
+            apply_dietary_filters(driver, halal, healthy, vegetarian)
+            # Find meals.
+            meals = [b for b in element_day.find_elements_by_xpath('//button')
+                     if b and b.text == "ADD"]
+            # Randomly choose one.
+            random.choice(meals).click()
+            # Check if you've ordered already.
+            time.sleep(0.3)
+            msg = element_day.find_element_by_xpath('//div[@id="notify_msg"]')
+            break
+        except IndexError: # No meals from dietary restriction.
+            # Repeat the loop so that the filters are undone.
+            pass
+        if loop_count > 3: # Sanity break.
+            break # If everything fails, go to next day.
+        loop_count += 1
+    return driver, element_day, msg.text
 
 def randomly_order(driver, halal=False, healthy=False, vegetarian=False):
+    notify_messages = []
     days = driver.find_elements_by_xpath("//div[@class='owl-item active']")
     for element_day in days:
-        # Select day.
         element_day.click()
-        time.sleep(1)
-        loop_count = 0 # Sanity break.
-        while True:
-            try:
-                # Apply dietary filter
-                apply_dietary_filters(driver, halal, healthy, vegetarian)
-                # Find meals.
-                meals = [b for b in element_day.find_elements_by_xpath('//button')
-                         if b and b.text == "ADD"]
-                # Randomly choose one.
-                random.choice(meals).click()
-                break
-            except IndexError: # No meals from dietary restriction.
-                # Repeat the loop so that the filters are undone.
-                pass
-            if loop_count > 3: # Sanity break.
-                break # If everything fails, go to next day.
-            loop_count += 1
+        driver, element_day, msg = randomly_order_one_day(
+            driver, element_day, halal, healthy, vegetarian
+        )
+        if msg:
+            notify_messages.append(msg)
         time.sleep(3)
-    # Checkout.
-    driver.find_element_by_link_text("PLACE ORDER").click()
+    try:
+        # Checkout.
+        driver.find_element_by_link_text("PLACE ORDER").click()
+    except: # If checkout fails, continues function.
+        pass
+    # Returns notification messages.
+    return notify_messages
