@@ -10,7 +10,11 @@ from whyclick.chrome import open_chrome, remove_popups
 def login(username, password, headless=False):
     whyq_url = 'https://www.whyq.sg'
     driver = open_chrome(headless=headless)
-    driver = remove_popups(driver, whyq_url, 'pop_promo')
+
+    try: # Sometimes there's irritating popups.
+        driver = remove_popups(driver, whyq_url, 'pop_promo')
+    except: # If there isn't, continue gracefully.
+        pass
 
     # Activate the login popup.
     element = driver.find_elements_by_xpath("//a[@data-target='#login_popup']")[0]
