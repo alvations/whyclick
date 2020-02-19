@@ -7,9 +7,9 @@ from bs4 import BeautifulSoup
 
 from whyclick.chrome import open_chrome, remove_popups
 
-def login(username, password, headless=False):
+def login(username, password, headless=False, no_image=True):
     whyq_url = 'https://www.whyq.sg'
-    driver = open_chrome(headless=headless)
+    driver = open_chrome(headless=headless, no_image=no_image)
 
     try: # Sometimes there's irritating popups.
         driver = remove_popups(driver, whyq_url, 'pop_promo')
@@ -57,11 +57,13 @@ def download_previous_orders(driver):
                 k, v = tr.find_all('td')
                 this_order[k.text.strip()] = v.text.strip()
 
-        for tr in order_items.find_all('tr'):
-            if len(tr.find_all('td')) == 2:
-                k, v = tr.find_all('td')
-                this_order[k.text.strip()] = v.text.strip()
+        order_item_keys = ['#', 'Item Name', 'Note', 'Qty', 'Price']
+        order_item_values = order_items.find('tr').text.strip().split('\n')
+        for k, td in zip(order_item_keys, order_item_values):
+            this_order[k] = td.strip()
         orders_json.append(this_order)
+
+        print(this_order)
 
     return orders_json
 
