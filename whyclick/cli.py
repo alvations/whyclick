@@ -49,9 +49,6 @@ def download_whyq_orders(
 @click.option(
     "--vegetarian", is_flag=True, default=False, help="Vegetarian only options."
 )
-@click.option(
-    "--vegetarian", is_flag=True, default=False, help="Vegetarian only options."
-)
 def randomly_order_whyq(
     username,
     password,
