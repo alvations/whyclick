@@ -13,9 +13,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 
-def open_chrome(headless=True, no_image=False, path_prefix=None):
+def open_chrome(headless=True, no_image=False):
     path = pyderman.install(browser=pyderman.chrome)
-    path = path_prefix + '/' + path if path_prefix else path
 
     options = Options()
     options.add_argument("--enable-javascript")
@@ -24,7 +23,8 @@ def open_chrome(headless=True, no_image=False, path_prefix=None):
     if no_image:
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
-        driver = webdriver.Chrome(path, options=options)
+
+    driver = webdriver.Chrome(path, options=options)
 
     # Sanity checks.
     driver.get("http://www.python.org")
