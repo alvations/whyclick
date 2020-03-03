@@ -62,11 +62,8 @@ def download_previous_orders(driver):
         for k, td in zip(order_item_keys, order_item_values):
             this_order[k] = td.strip()
         orders_json.append(this_order)
-
-        print(this_order)
-
+        #print(this_order)
     return orders_json
-
 
 def apply_dietary_filters(driver, halal=False, healthy=False, vegetarian=False):
     # Apply dietary filter
