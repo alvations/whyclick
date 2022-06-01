@@ -14,34 +14,60 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import DesiredCapabilities
 
-def open_chrome(headless=True, no_image=False, keep_log=True, allow_non_w3c=True, version="latest"):
-    path = pyderman.install(browser=pyderman.chrome, version=version)
 
-    options = Options()
-    options.add_argument("--enable-javascript")
-    options.headless = headless
+class ChromeBrowser:
+    """Wrapper object to selenium WebDriver."""
+    def __init__(self, headless=True, no_image=False, keep_log=True,
+                 allow_non_w3c=True, version="latest"):
+        self.headless = headless
+        self.no_image = no_image
+        self.keep_log = keep_log
+        self.allow_non_w3c = allow_non_w3c
+        self.version = version
+        # Open the web-browser.
+        self.driver = self.open_chrome(self.headless, self.no_image,
+            self.keep_log, self.allow_non_w3c, self.version)
 
-    # Capabilities to keep logs.
-    capabilities = DesiredCapabilities.CHROME
+    def page_source(self):
+        return self.driver.page_source
 
-    if keep_log:
-        capabilities["loggingPrefs"] = {"performance": "ALL"}  # newer: goog:loggingPrefs
+    def soupify(self, *args, **kwargs):
+        return BeautifulSoup(self.driver.page_source, *args, **kwargs)
 
-    # Allow non W3C standard command, see https://stackoverflow.com/q/56111529/610569
-    if allow_non_w3c:
-        options.add_experimental_option('w3c', False)
+    @staticmethod
+    def open_chrome(headless=True, no_image=False, keep_log=True,
+                    allow_non_w3c=True, version="latest"):
+        path = pyderman.install(browser=pyderman.chrome, version=version)
+        options = Options()
+        options.add_argument("--enable-javascript")
+        options.headless = headless
 
-    if no_image:
-        prefs = {"profile.managed_default_content_settings.images": 2}
-        options.add_experimental_option("prefs", prefs)
+        # Capabilities to keep logs.
+        capabilities = DesiredCapabilities.CHROME
 
-    driver = webdriver.Chrome(path, options=options,
-        desired_capabilities=capabilities)
+        if keep_log:
+            capabilities["loggingPrefs"] = {"performance": "ALL"}  # newer: goog:loggingPrefs
 
-    # Sanity checks.
-    driver.get("http://www.python.org")
-    assert "Python" in driver.title
-    return driver
+        # Allow non W3C standard command, see https://stackoverflow.com/q/56111529/610569
+        if allow_non_w3c:
+            options.add_experimental_option('w3c', False)
+
+        if no_image:
+            prefs = {"profile.managed_default_content_settings.images": 2}
+            options.add_experimental_option("prefs", prefs)
+
+        driver = webdriver.Chrome(path, options=options,
+            desired_capabilities=capabilities)
+
+        # Sanity checks.
+        driver.get("http://www.python.org")
+        assert "Python" in driver.title
+
+        return driver
+
+
+def open_chrome(*args, **kwargs):
+    return Chromebrowser.open_chrome(*args, **kwargs)
 
 
 def remove_popups(driver, url, pop_name):
